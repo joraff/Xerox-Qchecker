@@ -3,12 +3,13 @@ require 'nokogiri'
 require 'open-uri'
 require 'timeout'
 require 'win32/registry'
+require "win32/eventlog"
 
 # These are the hosts we should check queues for
 HOSTS = [
+  "cartman.continuum.tamu.edu",
   "kyle.continuum.tamu.edu",
   "stan.continuum.tamu.edu",
-  "cartman.continuum.tamu.edu",
   "timmy.continuum.tamu.edu"
   ]
 
@@ -50,6 +51,9 @@ TABLE_FORMAT = [
   "details_link"
   ]
 
+@logger = Win32::EventLog.new
+
+
 # Method to add or remove entries in the registry for a given load balance port
 # params:
 # => action: on or off
@@ -57,6 +61,8 @@ TABLE_FORMAT = [
 # => queue:  the printer lpr queue to modify the load balance port for
 
 def mod_reg(action, host, queue)
+  change = false
+  
   begin
     key_name = PORTS[queue][host]
   rescue Exception => e
@@ -74,8 +80,12 @@ def mod_reg(action, host, queue)
       begin
         if current_hostname == BOGUS_HOST && action == :on
           reg["HostName"] = host
+          @logger.report_event(:source => "Xerox Queue Accept Checker", :event_id => 2, :event_type => Win32::EventLog::INFO, :data => "Enabling pcounter port for host: #{host}")
+          change = true
         elsif current_hostname == host && action == :off
           reg["HostName"] = BOGUS_HOST
+          @logger.report_event(:source => "Xerox Queue Accept Checker", :event_id => 1, :event_type => Win32::EventLog::INFO, :data => "Disabling pcounter port for host: #{host}")
+          change = true
         end
       rescue Win32::Registry::Error => e
         puts "Error writing to the registry key: #{key_path}"
@@ -84,6 +94,7 @@ def mod_reg(action, host, queue)
   rescue Win32::Registry::Error => e
     puts "Error reading the registry key #{key_path}: #{e.message}"
   end
+  return change
 end
 
 def disable_host_for_queue(host, queue)
@@ -118,9 +129,12 @@ def hashify_values_with_keys(values, keys)
   hash
 end
 
+puts ""
+puts "  #{"Host".ljust(30)}#{"Queue".ljust(15)}#{"Accepting?".ljust(15)}#{"Releasing?".ljust(15)}"
+puts (0..75).map { "=" }.join
+
 HOSTS.each do |host|
-  puts "Evaluating: #{host}"
-  
+   
   @doc = fetch_host_html(host)
   
   if @doc
@@ -135,19 +149,22 @@ HOSTS.each do |host|
     QUEUES.each do |key|
       if queues[key]
         if queues[key]["accepts"] == "Yes" && queues[key]["releases"] == "Yes"
-          puts "Queue #{key} on #{host} is accepting and releasing, ensuring port hostname is accurate"
-          enable_host_for_queue(host, key)
+          result = enable_host_for_queue(host, key)
         else
-          puts "Queue #{key} on #{host} is either not accepting or not releasing, changing port hostname to bogus"
-          disable_host_for_queue(host, key)
+          result = disable_host_for_queue(host, key)
         end
       else
         puts "#{host} has no queue named #{key}! Removing from #{key} load balance port"
         disable_host_for_queue(host, key)
       end
+      
+      puts ( (result ? "* " : "  ") + host ).ljust(30) + key.ljust(15) + queues[key]["accepts"].ljust(15) + queues[key]["releases"].ljust(15)
     end
   else
     # remove_all
   end
+  puts (0..75).map { "-" }.join
 end
 
+puts ""
+puts "* = Indicates that a queue status changed"
