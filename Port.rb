@@ -1,9 +1,15 @@
 require File.join File.dirname(__FILE__), 'Registry.rb'
+require File.join File.dirname(__FILE__), 'Exceptions.rb'
+
+require 'yaml'
 
 @@bogus_host = "bogus.continuum.tamu.edu"
 @@reg_prefix = "SYSTEM\\CurrentControlSet\\Control\\Print\\Monitors\\Pcounter Port\\Ports"
 
 class Port
+  
+  attr_reader :host, :queue, :recently_changed, :regkey, :accepting
+  
   def initialize(args)
     @name = args[:name]
     @host = args[:host]
@@ -18,39 +24,43 @@ class Port
   end
 
   def accepting=(val)
-    changed = false
+    @recently_changed = false
     
-    if val == "No" and self.enabled?
-      @accepting = false
-      disable
-      changed = true
-    elsif val == "Yes" and not self.enabled?
+    
+    if val and self.disabled?
       @accepting = true
       enable
-      changed = true
+      @recently_changed = true
+    elsif not val and self.enabled?
+      @accepting = false
+      disable
+      @recently_changed = true
     end
     
-    return changed
+    return @recently_changed
   end
   
   def enabled?
     begin
       return registry_hostname != @host ? false : true
     rescue RegistryReadError => e
-      # TODO: ErrorHandler.handle(e, self)
+      e.object = self
+      raise
     else
-      # TODO: ErrorHandler.clear(RegistryReadError, self)
+      $notification_center.clear RegistryReadError.new(nil, self)
     end
   end
   
+  def disabled?
+    !enabled?
+  end
+  
   def to_s
-    s = "#<#{self.class}:#{self.object_id}>\n"
-    s += "Name => #{@name}\n"
-    s += "Host => #{@host}\n"
-    s += "Queue => #{@queue}\n"
-    s += "Accepting? => #{@accepting}\n"
-    s += "Releasing? => #{@releasing}\n"
-    s += "Registry Key => #{@regkey}\n"
+    self.to_yaml
+  end
+  
+  def self.bogus_host
+    @@bogus_host
   end
   
   private
@@ -59,7 +69,11 @@ class Port
     begin
       @regkey.write_key(:key => "hostname", :value => @host)
     rescue RegistryReadError, RegistryWriteError => e
-      # TODO: handle exception
+      e.object = self
+      raise
+    else
+      $notification_center.clear RegistryReadError.new(nil, self)
+      $notification_center.clear RegistryWriteError.new(nil, self)
     end
   end
   
@@ -67,7 +81,11 @@ class Port
     begin
       @regkey.write_key(:key => "hostname", :value => @@bogus_host)
     rescue RegistryReadError, RegistryWriteError => e
-      # TODO: handle exception
+      e.object = self
+      raise
+    else
+      $notification_center.clear RegistryReadError.new(nil, self)
+      $notification_center.clear RegistryWriteError.new(nil, self)
     end
   end
   

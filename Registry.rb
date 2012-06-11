@@ -1,6 +1,10 @@
+require File.join File.dirname(__FILE__), 'Exceptions.rb'
+
 require 'win32/registry'
+require 'yaml'
 
 class Registry
+  attr_reader :key_path
   
   # CLASS METHODS
   
@@ -20,7 +24,7 @@ class Registry
         reg[args[:key]]
       end
     rescue Win32::Registry::Error => e
-      raise RegistryReadError, e.message + " " + self.class.join(@key_path, args[:key])
+      raise RegistryReadError.new(nil, self)
     end
   end
   
@@ -30,20 +34,16 @@ class Registry
         begin
           reg[args[:key]] = args[:value]
         rescue Win32::Registry::Error => e
-          raise RegistryWriteError, e.message + " Could not set #{self.class.join(@key_path, args[:key])} to '#{args[:value]}'."
+          raise RegistryWriteError.new(nil, self)
         end
       end
     rescue Win32::Registry::Error => e
-      raise RegistryReadError, e.message + " " + self.class.join(@key_path, args[:key])
+      raise RegistryReadError.new(nil, self)
     end
   end
   
   def to_s
-    s = "#<#{self.class}:#{self.object_id}>\n"
-    s += "Key path => #{@key_path}\n"
+    self.to_yaml
   end
 end
 
-class RegistryReadError < Exception; end
-
-class RegistryWriteError < Exception; end
