@@ -29,7 +29,7 @@ PORTS = [
 ]
 
 $notification_center = Notifier.new
-
+$debug = true
 
 def check(ports)
   threads = []
@@ -41,12 +41,15 @@ def check(ports)
         queue = PrinterQueue.new( :host => port.host, :queue => port.queue)
         status = queue.accepting?
         # If status is nil, make no change to the port
-        port.accepting = status if status
+        port.accepting = status
 =begin
   TODO Add integration with the windows event log here.
 =end
+      rescue MaintenanceMode => e
+        port.accepting = false
+        $notification_center.raise_e(e) if $debug
       rescue Exception => e
-        $notification_center.notify(e)
+        $notification_center.raise_e(e)
       end
 
     end

@@ -14,7 +14,7 @@ class Notifier
     @limiter = ExceptionLimiter.new
   end
   
-  def notify(e)    
+  def raise_e(e)    
     if @limiter.should_raise? e
       exception_method_name = e.class.to_s.underscore
       if self.respond_to? exception_method_name, true
@@ -23,6 +23,10 @@ class Notifier
         unspecified_error e
       end
     end
+  end
+  
+  def notify(m)
+    send_email_with_reg("Debug notification", m)
   end
   
   def clear(e)
@@ -89,13 +93,16 @@ class Notifier
     send_email_with_reg("Registry write error", msg)
   end
   
-  def unspecified_error(e)
-    msg = "Exception: #{e}\n#{e.message}"
-    send_email("Exception was raised", msg)
+  def maintenance_mode(e)
+    msg = "Host #{e.object.host} has gone into maintenance mode."
+    notify(msg)
   end
   
-  private
-  
+  def unspecified_error(e)
+    msg = "Exception: #{e.inspect}\n#{e.message}\n\n#{e.backtrace}"
+    send_email("Exception was raised", msg)
+  end
+
   def send_email(subject, body, html=false)
     body.gsub!(/(\r)?\n/, "<br />") if html
 
@@ -120,7 +127,7 @@ class Notifier
 
       Current registry status:
 
-      <span style="font-family:monospace">#{self.build_registry_table}</span>
+      <span style="font-family:monospace">#{build_registry_table}</span>
     MESSAGE
 
     send_email(subject, message, true)
@@ -131,7 +138,7 @@ class Notifier
     s += (0..(s.length)).map { "=" }.join + "\n"
     PORTS.each do |port|
       begin
-        t = "#{port.name}".ljust(60, '.') + port.regkey.read_key("hostname") + "\n"
+        t = "#{port.name}".ljust(60, '.') + port.regkey.read_key(:key =>"HostName").to_s + "\n"
         t += (0..(t.length)).map { "-" }.join + "\n"
         s += t
       rescue Exception => e

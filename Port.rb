@@ -8,7 +8,7 @@ require 'yaml'
 
 class Port
   
-  attr_reader :host, :queue, :recently_changed, :regkey, :accepting
+  attr_reader :name, :host, :queue, :recently_changed, :regkey, :accepting
   
   def initialize(args)
     @name = args[:name]
@@ -26,14 +26,15 @@ class Port
   def accepting=(val)
     @recently_changed = false
     
-    
-    if val and self.disabled?
+    if val and disabled?
       @accepting = true
       enable
+      $notification_center.notify("Port #{name} has been enabled.") if $debug
       @recently_changed = true
-    elsif not val and self.enabled?
+    elsif (not val) and enabled?
       @accepting = false
       disable
+      $notification_center.notify("Port #{name} has been disabled.") if $debug
       @recently_changed = true
     end
     

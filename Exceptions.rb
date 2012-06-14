@@ -28,3 +28,5 @@ class RegistryReadError < ExceptionWithObject; end
 
 class RegistryWriteError < ExceptionWithObject; end
 
+class MaintenanceMode < ExceptionWithObject; end
+

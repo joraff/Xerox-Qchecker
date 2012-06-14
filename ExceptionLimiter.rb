@@ -20,10 +20,18 @@ class ExceptionLimiter
   private
   
   def contains?(e)
-    @current_exceptions.include? [e.object.host, e.class]
+    begin
+      @current_exceptions.include? [e.object.host, e.class]
+    rescue NoMethodError
+      return false
+    end
   end
   
   def add(e)
-    @current_exceptions << [e.object.host, e.class]
+    begin
+      @current_exceptions << [e.object.host, e.class]
+    rescue NoMethodError
+      
+    end
   end
 end
