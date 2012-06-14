@@ -35,7 +35,7 @@ class PrinterQueue
   private
   
   def query_host
-    fetch_host_html
+    return unless fetch_host_html
     parse_response
   end
   
@@ -50,6 +50,7 @@ class PrinterQueue
       if code == "503"
         puts "Host #{@host} is in maintenance mode. Not accepting"
         @accepting = false
+        return false
       else
         raise HttpError.new(code, self)
       end
@@ -59,6 +60,8 @@ class PrinterQueue
     
     $notification_center.clear(HttpError.new(nil, self))
     $notification_center.clear(ConnectionTimeout.new(nil, self))
+    
+    return true
   end
   
   
@@ -86,7 +89,7 @@ class PrinterQueue
         if queues.has_key? @queue
           queue_hash = queues[@queue]
         else
-          raise QueueNotFound.new(nil, self) # TODO: message
+          raise QueueNotFound.new(nil, self)
         end
       # If a queue is not found on the printer, then it WILL NOT ACCEPT JOBS
       # Disable the printer, still also raise an exception 'cause this is kind of a big deal
@@ -110,7 +113,7 @@ class PrinterQueue
       end
     
     else
-      raise EmptyResponse.new(nil, self) # TODO: message here
+      raise EmptyResponse.new(nil, self)
     end
     
     $notification_center.clear StructureNotFound.new(nil, self)

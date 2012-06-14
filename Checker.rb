@@ -42,7 +42,10 @@ def check(ports)
         status = queue.accepting?
         # If status is nil, make no change to the port
         port.accepting = status if status
-      rescue StandardError => e
+=begin
+  TODO Add integration with the windows event log here.
+=end
+      rescue Exception => e
         $notification_center.notify(e)
       end
 
@@ -50,17 +53,12 @@ def check(ports)
   end
   
   threads.each { |t| t.join }
-  
-  print_status(PORTS)
 end
 
 
 # MAIN LOOP #
 
-print_status(PORTS)
-
-6.times do |t|
-  puts "Check ##{t}:"
+while true do
   check(PORTS)
-  sleep 10
+  sleep 60
 end

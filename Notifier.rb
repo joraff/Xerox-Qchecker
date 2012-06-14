@@ -14,18 +14,19 @@ class Notifier
     @limiter = ExceptionLimiter.new
   end
   
-  def notify(e)
+  def notify(e)    
     if @limiter.should_raise? e
-      send(e.class.to_s.underscore, e)
+      exception_method_name = e.class.to_s.underscore
+      if self.respond_to? exception_method_name, true
+        send(exception_method_name, e)
+      else
+        unspecified_error e
+      end
     end
   end
   
   def clear(e)
     @limiter.clear(e)
-  end
-  
-  def structure_not_found(e)
-    
   end
   
   private
@@ -88,6 +89,11 @@ class Notifier
     send_email_with_reg("Registry write error", msg)
   end
   
+  def unspecified_error(e)
+    msg = "Exception: #{e}\n#{e.message}"
+    send_email("Exception was raised", msg)
+  end
+  
   private
   
   def send_email(subject, body, html=false)
@@ -96,7 +102,7 @@ class Notifier
     message = <<-MESSAGE_END.gsub(/^ {6}/, '')
       From: Xerox 4112 Queue Checker (SCC) <#{@@from}>
       To: #{@@to}
-      Subject: #{subject}
+      Subject: [Xerox QChecker] (SCC) #{subject}
       MIME-Version: 1.0
       #{ "Content-type: text/html" if html }
 
