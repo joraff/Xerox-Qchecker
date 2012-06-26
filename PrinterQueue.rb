@@ -47,17 +47,11 @@ class PrinterQueue
       end
     rescue OpenURI::HTTPError => e
       code = e.io.status[0]
-      if code == "503"
-        @accepting = false
-        raise MaintenanceMode.new(nil, self)
-      else
-        raise HttpError.new(code, self)
-      end
+      raise HttpError.new(code, self)
     rescue Timeout::Error, SocketError, Exception => e
       raise ConnectionTimeout.new(nil, self)
     end
     
-    $notification_center.clear(MaintenanceMode.new(nil, self))
     $notification_center.clear(HttpError.new(nil, self))
     $notification_center.clear(ConnectionTimeout.new(nil, self))
     
