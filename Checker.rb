@@ -45,9 +45,6 @@ def check(ports)
 =begin
   TODO Add integration with the windows event log here.
 =end
-      rescue MaintenanceMode => e
-        port.accepting = false
-        $notification_center.raise_e(e) if $debug
       rescue Exception => e
         $notification_center.raise_e(e)
       end
