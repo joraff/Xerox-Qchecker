@@ -6,10 +6,31 @@ require 'yaml'
 @@bogus_host = "bogus.continuum.tamu.edu"
 @@reg_prefix = "SYSTEM\\CurrentControlSet\\Control\\Print\\Monitors\\Pcounter Port\\Ports"
 
+# Class representing a Pcounter port for a printer
 class Port
   
-  attr_reader :name, :host, :queue, :recently_changed, :regkey, :accepting
+  # @return [String] Name of the port
+  attr_reader :name
   
+  # @return [String] Real, resolvable hostname of the printer this port corresponds to
+  attr_reader :host
+  
+  # @return [String] Queue on a printer this port corresponds to
+  attr_reader :queue
+  
+  # @return [String] Flag indicating a recent change in accepting or releasing status
+  attr_reader :recently_changed
+  
+  # @return [String] Registry key for this port
+  attr_reader :regkey
+  
+  # @return [String] Flag indicating the current accepting status. May be nil after initialization
+  attr_reader :accepting
+  
+  # @param [Hash] args
+  # @option args [String] :name 
+  # @option args [String] :host
+  # @option args [String] :queue
   def initialize(args)
     @name = args[:name]
     @host = args[:host]
@@ -23,6 +44,9 @@ class Port
     @regkey = Registry.new( :key_path => Registry.join( @@reg_prefix, @name ) )
   end
 
+  # Sets the status of the pcounter port
+  # @param [bool] Status that the port should be set to
+  # @return [bool] Flag indicating whether or not the port's status value changed
   def accepting=(val)
     @recently_changed = false
     
@@ -41,6 +65,9 @@ class Port
     return @recently_changed
   end
   
+  
+  # Returns whether or not the port is enabled
+  # @return [bool] Returns whether or not the port is enabled
   def enabled?
     begin
       return registry_hostname != @host ? false : true
@@ -52,20 +79,27 @@ class Port
     end
   end
   
+  
+  # Returns whether or not the port is disabled
+  # @return [bool] Returns whether or not the port is disabled
   def disabled?
     !enabled?
   end
   
+  
+  # @return [String] a yaml representation of the current object
   def to_s
     self.to_yaml
   end
   
+  # @return [string] the bogus hostname used to disable a port
   def self.bogus_host
     @@bogus_host
   end
   
   private
   
+  # Enables a port
   def enable
     begin
       @regkey.write_key(:key => "hostname", :value => @host)
@@ -78,6 +112,7 @@ class Port
     end
   end
   
+  # Disables a port
   def disable
     begin
       @regkey.write_key(:key => "hostname", :value => @@bogus_host)
@@ -90,6 +125,7 @@ class Port
     end
   end
   
+  # @return [String] the current hostname in the registry for the port
   def registry_hostname
     @regkey.read_key(:key => "hostname")
   end

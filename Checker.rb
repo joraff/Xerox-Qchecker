@@ -1,7 +1,16 @@
+##
+# QChecker - A program to enable/disable Pcounter ports based on a printer's document accepting status.
+# 
+# @author Joseph Rafferty, Texas A&M University
+
 require File.join File.dirname(__FILE__), 'Port.rb'
 require File.join File.dirname(__FILE__), 'PrinterQueue.rb'
 require File.join File.dirname(__FILE__), 'Notifier.rb'
 
+
+# Prints a table of queues on a host and their accepting status
+# @param [Array] ports an array of Port objects
+# 
 def print_status(ports)
   puts ""
   puts "  #{"Host".ljust(30)}#{"Queue".ljust(15)}#{"Accepting?".ljust(15)}"
@@ -12,6 +21,8 @@ def print_status(ports)
   end
 end
 
+# An array of port objects
+# @see Port
 PORTS = [
   
   # SCC-Main Queues
@@ -28,9 +39,15 @@ PORTS = [
   
 ]
 
+# Init a Notifier class to handle our exceptions
 $notification_center = Notifier.new
+
+# Debug mode sends more notifications 
 $debug = true
 
+
+# Checks the accepting status of a queue and sets the port to the same
+# @param [Array] ports array of Port objects
 def check(ports)
   threads = []
   

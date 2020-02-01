@@ -3,9 +3,11 @@ require 'open-uri'
 require 'timeout'
 require File.join File.dirname(__FILE__), 'Exceptions.rb'
 
+# Class representing a queue on a 4112 printer
 class PrinterQueue
   attr_reader :host, :queue
   
+  # Format or order of the columns expected in the HTML table for a printer
   @@table_format = [
     :printer,
     :queue,
@@ -16,17 +18,24 @@ class PrinterQueue
     :details_link
   ]
   
-  
+  # Initialized a new PrinterQueue object.
+  # @param [Hash] args Arguments to init the object with
+  # @option args [String] :host The hostname of the printer this queue is on
+  # @option opts [String] :queue The name of the queue on the printer
   def initialize(args)
     @host = args[:host]
     @queue = args[:queue]
   end
   
+  # Queries the printer for and returns the current accepting status of the queue. 
+  # @return [boolean] accepting status
   def accepting?
     query_host
     @accepting
   end
   
+  # Queries the printer for and returns the current releasing status of the queue. 
+  # @return [boolean] releasing status
   def releasing?
     query_host
     @releasing
@@ -34,11 +43,13 @@ class PrinterQueue
   
   private
   
+  # Convenience method that fetches the HTML from the printer server and parses the response
   def query_host
     return unless fetch_host_html
     parse_response
   end
   
+  # Fetches the response for a particular URL that contains information about the queue
   def fetch_host_html
     begin
       url = "http://#{@host}/isgw/ListQueues.do?method=byPrinterName"
@@ -58,7 +69,7 @@ class PrinterQueue
     return true
   end
   
-  
+  # Parses an HTML encoded response containing information about the queue using a particular XPath
   def parse_response
     if @html
       

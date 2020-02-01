@@ -1,0 +1,438 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>
+  Class: ExceptionLimiter
+  
+    &mdash; Documentation by YARD 0.8.2.1
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" media="screen" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '';
+  framesUrl = "frames.html#!" + escape(window.location.href);
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html">Index (E)</a> &raquo;
+    
+    
+    <span class="title">ExceptionLimiter</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><h1>Class: ExceptionLimiter
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+    <dt class="r1">Inherits:</dt>
+    <dd class="r1">
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">ExceptionLimiter</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+      </dd>
+    
+  
+  
+    
+  
+    
+  
+  
+  
+    <dt class="r2 last">Defined in:</dt>
+    <dd class="r2 last">ExceptionLimiter.rb</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>
+Limits the frequency of exception/notification emails
+</p>
+<pre class="code ruby"><code>
+  <span class='rubyid_Keeps constant id'>Keeps</span> <span class='rubyid_an identifier id'>an</span> <span class='rubyid_internal identifier id'>internal</span> <span class='rubyid_array identifier id'>array</span> <span class='rubyid_of identifier id'>of</span> <span class='rubyid_exceptions identifier id'>exceptions</span> <span class='rubyid_that identifier id'>that</span> <span class='rubyid_have identifier id'>have</span> <span class='rubyid_been identifier id'>been</span> <span class='rubyid_previously identifier id'>previously</span> <span class='rubyid_raised identifier id'>raised</span> <span class='rubyid_per identifier id'>per</span> <span class='rubyid_host identifier id'>host</span><span class='dot token'>.</span>
+</code></pre>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small>(<a href="#" class="summary_toggle">collapse</a>)</small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#clear-instance_method" title="#clear (instance method)">- (Object) <strong>clear</strong>(e) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>
+Removes an exception from the raised list.
+</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">- (ExceptionLimiter) <strong>initialize</strong> </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>
+A new instance of ExceptionLimiter.
+</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#should_raise%3F-instance_method" title="#should_raise? (instance method)">- (bool) <strong>should_raise?</strong>(e) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>
+Decides if a certain exception/notification should be raised.
+</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    - (<tt><span class='object_link'><a href="" title="ExceptionLimiter (class)">ExceptionLimiter</a></span></tt>) <strong>initialize</strong> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>
+A new instance of ExceptionLimiter
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+5
+6
+7</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'ExceptionLimiter.rb', line 5</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_initialize identifier id'>initialize</span>
+  <span class='rubyid_@current_exceptions ivar id'>@current_exceptions</span> <span class='assign token'>=</span> <span class='lbrack token'>[</span><span class='rbrack token'>]</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="clear-instance_method">
+  
+    - (<tt>Object</tt>) <strong>clear</strong>(e) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+  <div class="note notetag">
+    <strong>Note:</strong>
+    <div class='inline'><p>
+ExceptionWithObject&#8217;s object is expected to have a host attribute
+</p>
+</div>
+  </div>
+
+<p>
+Removes an exception from the raised list. To be called after a code block
+has been cleared with no exceptions
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>e</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="ExceptionWithObject.html" title="ExceptionWithObject (class)">ExceptionWithObject</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>
+Exception to clear
+</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+24
+25
+26</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'ExceptionLimiter.rb', line 24</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_clear identifier id'>clear</span><span class='lparen token'>(</span><span class='rubyid_e identifier id'>e</span><span class='rparen token'>)</span>
+  <span class='rubyid_@current_exceptions ivar id'>@current_exceptions</span><span class='dot token'>.</span><span class='rubyid_delete identifier id'>delete</span> <span class='lbrack token'>[</span><span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_object identifier id'>object</span><span class='dot token'>.</span><span class='rubyid_host identifier id'>host</span><span class='comma token'>,</span> <span class='rubyid_e identifier id'>e</span><span class='dot token'>.</span><span class='rubyid_class identifier id'>class</span><span class='rbrack token'>]</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="should_raise?-instance_method">
+  
+    - (<tt>bool</tt>) <strong>should_raise?</strong>(e) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>
+Decides if a certain exception/notification should be raised. Adds it if it
+should be raised.
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>e</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="ExceptionWithObject.html" title="ExceptionWithObject (class)">ExceptionWithObject</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>
+Exception to raise
+</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>bool</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+12
+13
+14
+15
+16
+17
+18
+19</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'ExceptionLimiter.rb', line 12</span>
+
+<span class='rubyid_def def kw'>def</span> <span class='rubyid_should_raise? fid id'>should_raise?</span><span class='lparen token'>(</span><span class='rubyid_e identifier id'>e</span><span class='rparen token'>)</span>
+  <span class='rubyid_if if kw'>if</span> <span class='rubyid_contains? fid id'>contains?</span> <span class='rubyid_e identifier id'>e</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_false false kw'>false</span>
+  <span class='rubyid_else else kw'>else</span>
+    <span class='rubyid_add identifier id'>add</span> <span class='rubyid_e identifier id'>e</span>
+    <span class='rubyid_return return kw'>return</span> <span class='rubyid_true true kw'>true</span>
+  <span class='rubyid_end end kw'>end</span>
+<span class='rubyid_end end kw'>end</span>
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+    <div id="footer">
+  Generated on Mon Jul 16 16:52:13 2012 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.2.1 (ruby-1.8.7).
+</div>
+
+  </body>
+</html>
